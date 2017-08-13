@@ -22,12 +22,6 @@ int lives = 3;
 int level = 1;
 
 
-
-
-
-
-
-
 int main(void)
 {
     node *blastlist = NULL;
@@ -144,7 +138,7 @@ int main(void)
 
 	ALLEGRO_BITMAP *line = al_create_bitmap(1, 1);
 	al_set_target_bitmap(line);
-	al_draw_filled_rectangle(0, 0, 1, 1, al_map_rgb(250, 255, 0));
+	al_draw_filled_rectangle(0, 0, 1, 1, al_map_rgb(255, 255, 0));
 
 	al_set_target_bitmap(al_get_backbuffer(display));
 
@@ -159,7 +153,7 @@ int main(void)
     drawship(ScreenWidth / 2 - 30, ScreenHeight / 2 - 30, &mycolor, 1.0);
     drawship2(ScreenWidth / 2 + 30, ScreenHeight / 2 - 30, &mycolor2, 1.0);
 
-    al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTRAL*WARRIOR");
+    al_draw_text(font, al_map_rgb(190,40,255), ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTRAL*WARRIOR");
     al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Press any key to continue");
 	draweffect(175, ScreenWidth / 2 - 150, ScreenHeight / 2 + 75, 15, 5, line, display);
     al_flip_display();
