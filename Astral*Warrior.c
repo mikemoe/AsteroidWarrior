@@ -43,7 +43,7 @@ int main(void)
     }
 
     al_set_window_position(display, 0, 0);
-    al_set_window_title(display, "ASTEROID WARRIOR");
+    al_set_window_title(display, "ASTRAL*WARRIOR");
 
     ALLEGRO_FONT *font = al_load_font("assets/fonts/pirulen.ttf", 10, 0);
 
