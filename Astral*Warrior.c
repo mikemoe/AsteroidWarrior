@@ -159,7 +159,7 @@ int main(void)
     drawship(ScreenWidth / 2 - 30, ScreenHeight / 2 - 30, &mycolor, 1.0);
     drawship2(ScreenWidth / 2 + 30, ScreenHeight / 2 - 30, &mycolor2, 1.0);
 
-    al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTEROID WARRIOR");
+    al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTRAL*WARRIOR");
     al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Press any key to continue");
 	draweffect(175, ScreenWidth / 2 - 150, ScreenHeight / 2 + 75, 15, 5, line, display);
     al_flip_display();
