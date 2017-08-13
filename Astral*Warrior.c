@@ -12,6 +12,22 @@
 #include <string.h>
 #include "gameutil.h"
 
+
+int ScreenHeight = 800;
+int ScreenWidth = 800;
+const int FPS = 60;
+
+int score = 0;
+int lives = 3;
+int level = 1;
+
+
+
+
+
+
+
+
 int main(void)
 {
     node *blastlist = NULL;

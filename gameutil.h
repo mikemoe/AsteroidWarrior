@@ -1,18 +1,18 @@
 #include <stdbool.h>
 #include <allegro5/allegro.h>
 #ifndef GAMEUTIL_H
-
+#define GAMEUTIL_H
 
 #define SCORESIZE 7
 
-int ScreenHeight = 800;
-int ScreenWidth = 800;
-const int FPS = 60.0;
+extern int ScreenHeight;
+extern int ScreenWidth;
+extern const int FPS;
 
 
-int score = 0;
-int lives = 3;
-int level = 1;
+extern int score;
+extern int lives;
+extern int level;
 
 
 enum direction {UP, DOWN, LEFT, RIGHT, CTRL, SPACE};
