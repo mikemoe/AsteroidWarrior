@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include "gameutil.h"
 
 
@@ -24,6 +26,10 @@ int level = 1;
 
 int main(void)
 {
+    // seed for random tile map
+    srand(time(NULL));
+
+
     node *blastlist = NULL;
     node2 *asteroidlist = NULL;
 
@@ -103,31 +109,44 @@ int main(void)
     float rotate = 0;
     direction dir = CTRL;
 
-    ALLEGRO_BITMAP *bitmap = al_create_bitmap(16, 20);
+    // draw game art on bitmaps
 
+    ALLEGRO_BITMAP *bitmap = al_create_bitmap(16, 20);
     al_set_target_bitmap(bitmap);
     drawship(8, 11, &mycolor, 1.0);
 
-    ALLEGRO_BITMAP *bitmap2 = al_create_bitmap(16, 20);
 
+    ALLEGRO_BITMAP *bitmap2 = al_create_bitmap(16, 20);
     al_set_target_bitmap(bitmap2);
     drawship2(8, 11, &mycolor2, 1.0);
 
-    ALLEGRO_BITMAP *blast = al_create_bitmap(2, 6);
 
+    ALLEGRO_BITMAP *blast = al_create_bitmap(2, 6);
     al_set_target_bitmap(blast);
     drawblast(0, 0, &blastcolor);
 
-    ALLEGRO_BITMAP *asteroid = al_create_bitmap(45, 40);
 
+    ALLEGRO_BITMAP *asteroid = al_create_bitmap(45, 40);
     al_set_target_bitmap(asteroid);
     drawasteroid(25, 20, &asteroidcolor, 1.0);
 
+
     ALLEGRO_COLOR asteroidcolor2 = al_map_rgb(0, 255, 50);
     ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(45, 40);
-
     al_set_target_bitmap(asteroid2);
     drawasteroid(25, 20, &asteroidcolor2, 1.0);
+
+
+
+    // map drawn on bitmap
+    int mapheight = 500;
+    int mapwidth = 500;
+    ALLEGRO_BITMAP *world = al_create_bitmap(mapwidth, mapheight);
+    al_set_target_bitmap(world);
+    al_clear_to_color(al_map_rgb(20, 40, 20));
+    drawmap(500, 500);
+
+
 
     al_set_target_bitmap(al_get_backbuffer(display));
 
@@ -631,6 +650,11 @@ youtube.com/watch?v=04_jviOqc3Y");
 			if(draw && al_is_event_queue_empty(event_queue))
 			{
 
+
+                al_draw_bitmap(world, ScreenWidth/2 - mapwidth/2, ScreenHeight/2 - mapheight/2, 0);
+
+
+
 				if (data.collide && effectframes <= 30)
 				{
 					draweffect(5, data.xcor, data.ycor, 8, 3, line, display);
@@ -773,6 +797,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 		al_destroy_bitmap(asteroid);
 		al_destroy_bitmap(asteroid2);
 		al_destroy_bitmap(line);
+        al_destroy_bitmap(world);
 
 		al_destroy_sample(blastsound);
 		al_destroy_sample(lazersound);

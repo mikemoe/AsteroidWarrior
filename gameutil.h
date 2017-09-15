@@ -67,6 +67,10 @@ void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness);
 void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect, ALLEGRO_DISPLAY *display);
 
 
+//TODO make this into conway's game of life
+void drawmap(int height, int width);
+
+
 bool borders(int x, int y);
 
 bool validmove(int x, int y);
@@ -93,5 +97,7 @@ void draw_nodes2(node2 *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *image2,
 void destroy_list2(node2 **nodehead);
 
 bool collision(node **blastlist, node2 *asteroidlist, float x, float y, bool *asteroidblasted, bool *shipblasted, effectdata *data);
+
+
 
 #endif

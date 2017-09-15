@@ -1,6 +1,7 @@
 #include "gameutil.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -553,3 +554,21 @@ bool collision(node **blastlist, node2 *asteroidlist, float x, float y, bool *as
     return collision;
 }
 
+// should be a multiple of ten
+void drawmap(int height, int width)
+{
+   int sqheight = height / 10;
+   int sqwidth = width / 10;
+
+   for (int i = 0; i < sqwidth; i++)
+   {
+       for(int j = 0; j < sqheight; j++)
+       {
+
+           bool drawsq = rand() % 2;
+           if(drawsq)
+               al_draw_filled_rectangle(i*10,j*10,(i+1)*10,(j+1)*10,al_map_rgb(120,120,120));
+       }
+   }
+
+}
