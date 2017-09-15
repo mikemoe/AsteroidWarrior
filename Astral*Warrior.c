@@ -92,10 +92,10 @@ int main(void)
     al_set_sample_instance_playmode(musicinstance2, ALLEGRO_PLAYMODE_LOOP);
     al_attach_sample_instance_to_mixer(musicinstance2, al_get_default_mixer());
 
-    ALLEGRO_COLOR mycolor = al_map_rgb(20, 150, 255);
-    ALLEGRO_COLOR mycolor2 = al_map_rgb(255, 255, 255);
-    ALLEGRO_COLOR blastcolor = al_map_rgb(200, 50, 0);
-    ALLEGRO_COLOR asteroidcolor = al_map_rgb(255, 25, 255);
+    ALLEGRO_COLOR mycolor = al_map_rgba(20, 150, 255, 0);
+    ALLEGRO_COLOR mycolor2 = al_map_rgba(255, 255, 255, 0);
+    ALLEGRO_COLOR blastcolor = al_map_rgba(200, 50, 0, 0);
+    ALLEGRO_COLOR asteroidcolor = al_map_rgba(255, 25, 255, 0);
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
 
@@ -131,7 +131,7 @@ int main(void)
     drawasteroid(25, 20, &asteroidcolor, 1.0);
 
 
-    ALLEGRO_COLOR asteroidcolor2 = al_map_rgb(0, 255, 50);
+    ALLEGRO_COLOR asteroidcolor2 = al_map_rgba(0, 255, 50, 0);
     ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(45, 40);
     al_set_target_bitmap(asteroid2);
     drawasteroid(25, 20, &asteroidcolor2, 1.0);
@@ -236,7 +236,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 
 	// instructions screen
-	textcolor = al_map_rgba(75, 255, 255, 255);
+	textcolor = al_map_rgb(75, 255, 255);
 
 	drawship(30, 30, &mycolor, 1.0);
 	drawship2(30, ScreenHeight / 2 - 30, &mycolor2, 1.0);
@@ -348,22 +348,9 @@ youtube.com/watch?v=04_jviOqc3Y");
 				goto finished;
 			}
 			else if(key0.keyboard.keycode == ALLEGRO_KEY_P)
-			{
 				defmove = false;
-				al_set_target_bitmap(bitmap2);
-				mycolor2 = al_map_rgb(255, 255, 255);
-				drawship2(8, 11, &mycolor2, 1.0);
-				al_set_target_bitmap(al_get_backbuffer(display));
-			}
 			else
-			{
 				defmove = true;
-				al_set_target_bitmap(bitmap);
-				mycolor = al_map_rgb(20, 150, 255);
-				drawship(8, 11, &mycolor, 1.0);
-				al_set_target_bitmap(al_get_backbuffer(display));
-
-			}
 
 		}
 
