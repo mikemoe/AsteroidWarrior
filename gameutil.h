@@ -7,6 +7,8 @@
 
 extern int ScreenHeight;
 extern int ScreenWidth;
+extern int mapheight;
+extern int mapwidth;
 extern const int FPS;
 
 
@@ -64,7 +66,7 @@ void drawblast(int x, int y, ALLEGRO_COLOR* mycolor);
 
 void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness);
 
-void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect, ALLEGRO_DISPLAY *display);
+void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect);
 
 
 //TODO make this into conway's game of life
@@ -79,7 +81,7 @@ void deleteNode(node **head_ref, node *del);
 
 void update_list(float movement, node **nodehead);
 
-void draw_nodes(node *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_DISPLAY *display);
+void draw_nodes(node *nodehead, ALLEGRO_BITMAP *image);
 
 void destroy_list(node **nodehead);
 
@@ -92,7 +94,7 @@ void deleteNode2(node2 **head_ref, node2 *del);
 
 void update_list2(float movement, node2 **nodehead);
 
-void draw_nodes2(node2 *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *image2, ALLEGRO_DISPLAY *display, float asteroidspeed);
+void draw_nodes2(node2 *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *image2, float asteroidspeed);
 
 void destroy_list2(node2 **nodehead);
 

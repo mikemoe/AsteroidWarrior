@@ -59,14 +59,11 @@ void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness)
     al_draw_line(x + 0, y + 15, x + -20, y + 20, *mycolor, thickness);
 }
 
-void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect, ALLEGRO_DISPLAY *display)
+void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect)
 {
 	
 	float rotate = ALLEGRO_PI / 3;
 	float angle = 0;
-
-
-	al_set_target_bitmap(al_get_backbuffer(display));
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -107,7 +104,7 @@ bool borders(int x, int y)
 {
     bool collide = false;
     // if ship is near screen borders set flag to true
-    if(x - 4 < 0 || y - 10 < 0 || x + 20 > ScreenWidth || y + 25 > ScreenHeight)
+    if(x - 4 < 0 || y - 10 < 0 || x + 20 > mapwidth || y + 25 > mapheight)
         collide = true;
 
 
@@ -121,9 +118,9 @@ bool validmove(int x, int y)
     bool valid = true;
     if(borders(x, y))
     {
-        if(y - 10 < 0 || y + 25 > ScreenHeight)
+        if(y - 10 < 0 || y + 25 > mapheight)
             valid = false;
-        if(x - 4 < 0 || x + 20 > ScreenWidth)
+        if(x - 4 < 0 || x + 20 > mapwidth)
             valid = false;
     }
 
@@ -171,14 +168,14 @@ void update_list(float movement, node **nodehead)
 
             // teleport to opposite side of screen
             if(trav->y - 10 < 0)
-                trav->y = ScreenHeight - 30;
-            else if(trav->y + 25 > ScreenHeight)
+                trav->y = mapheight - 30;
+            else if(trav->y + 25 > mapheight)
                 trav->y = 15;
 
 
             if(trav->x - 10 < 0)
-                trav->x = ScreenWidth - 30;
-            else if(trav->x + 25 > ScreenWidth)
+                trav->x = mapwidth - 30;
+            else if(trav->x + 25 > mapwidth)
                 trav->x = 15;
 
 
@@ -209,9 +206,8 @@ void update_list(float movement, node **nodehead)
     }
 }
 
-void draw_nodes(node *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_DISPLAY *display)
+void draw_nodes(node *nodehead, ALLEGRO_BITMAP *image)
 {
-    al_set_target_bitmap(al_get_backbuffer(display));
     node *trav = nodehead;
     // iterate through lazers
     while(trav != NULL)
@@ -373,14 +369,14 @@ void update_list2(float movement, node2 **nodehead)
         if(borders(trav->x, trav->y))
         {
             if(trav->y - 10 < 0)
-                trav->y = ScreenHeight - 30;
-            else if(trav->y + 25 > ScreenHeight)
+                trav->y = mapheight - 30;
+            else if(trav->y + 25 > mapheight)
                 trav->y = 15;
 
 
             if(trav->x - 10 < 0)
-                trav->x = ScreenWidth - 30;
-            else if(trav->x + 25 > ScreenWidth)
+                trav->x = mapwidth - 30;
+            else if(trav->x + 25 > mapwidth)
                 trav->x = 15;
 
         }
@@ -446,9 +442,9 @@ void update_list2(float movement, node2 **nodehead)
     }
 }
 
-void draw_nodes2(node2 *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *image2, ALLEGRO_DISPLAY *display, float asteroidspeed)
+void draw_nodes2(node2 *nodehead, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *image2, float asteroidspeed)
 {
-    al_set_target_bitmap(al_get_backbuffer(display));
+
     node2 *trav = nodehead;
     while(trav != NULL)
     {
@@ -567,7 +563,7 @@ void drawmap(int height, int width)
 
            bool drawsq = rand() % 2;
            if(drawsq)
-               al_draw_filled_rectangle(i*10,j*10,(i+1)*10,(j+1)*10,al_map_rgb(120,120,120));
+               al_draw_filled_rectangle(i*10,j*10,(i+1)*10,(j+1)*10,al_map_rgba(0,15,45,255));
        }
    }
 
