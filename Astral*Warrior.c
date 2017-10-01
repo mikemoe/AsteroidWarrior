@@ -17,13 +17,10 @@
 
 int ScreenHeight = 800;
 int ScreenWidth = 800;
-int mapheight = 750;
-int mapwidth = 1100;
- 
-
-
-
-
+int mapheight = 1500;
+int mapwidth = 1500;
+int numrows;
+int numcols;
 const int FPS = 60;
 
 int score = 0;
@@ -34,14 +31,24 @@ int level = 1;
 int main(void)
 {
     // seed for random tile map
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
+    numrows = mapheight / 10;
+    numcols = mapwidth / 10;
+
+    bool is_live[numrows][numcols];
+
+    for(int i = 0; i < numrows; i++)
+    {
+        for(int j = 0; j < numcols; j++)
+        {
+            is_live[i][j] = rand() % 2;
+        }
+    }
 
     node *blastlist = NULL;
     node2 *asteroidlist = NULL;
 
-	// seed for pseudo random generator
-    srand((unsigned int)time(NULL));
 
     ALLEGRO_DISPLAY *display;
 
@@ -99,15 +106,14 @@ int main(void)
     al_set_sample_instance_playmode(musicinstance2, ALLEGRO_PLAYMODE_LOOP);
     al_attach_sample_instance_to_mixer(musicinstance2, al_get_default_mixer());
 
-    ALLEGRO_COLOR mycolor = al_map_rgba(20, 150, 255, 0);
-    ALLEGRO_COLOR mycolor2 = al_map_rgba(255, 255, 255, 0);
-    ALLEGRO_COLOR blastcolor = al_map_rgba(200, 50, 0, 0);
-    ALLEGRO_COLOR asteroidcolor = al_map_rgba(255, 25, 255, 0);
+    ALLEGRO_COLOR mycolor = al_map_rgb(20, 150, 255);
+    ALLEGRO_COLOR mycolor2 = al_map_rgb(255, 255, 255);
+    ALLEGRO_COLOR blastcolor = al_map_rgb(255, 30, 0);
+    ALLEGRO_COLOR asteroidcolor = al_map_rgb(255, 25, 255);
+    ALLEGRO_COLOR clearcolor = al_map_rgba(15, 15, 15, 255);
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
 
-
-    int mapframewait = 0;
     bool done = false;
     bool draw = true;
     int shipx = mapwidth / 2 - 8;
@@ -137,23 +143,21 @@ int main(void)
     drawblast(0, 0, &blastcolor);
 
 
-    ALLEGRO_BITMAP *asteroid = al_create_bitmap(45, 40);
+    ALLEGRO_BITMAP *asteroid = al_create_bitmap(60, 60);
     al_set_target_bitmap(asteroid);
-    drawasteroid(25, 20, &asteroidcolor, 1.0);
+    drawasteroid(30, 30, &asteroidcolor, 1.0);
 
 
-    ALLEGRO_COLOR asteroidcolor2 = al_map_rgba(0, 255, 50, 0);
-    ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(45, 40);
+    ALLEGRO_COLOR asteroidcolor2 = al_map_rgb(0, 255, 50);
+    ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(60, 60);
     al_set_target_bitmap(asteroid2);
-    drawasteroid(25, 20, &asteroidcolor2, 1.0);
+    drawasteroid(30, 30, &asteroidcolor2, 1.0);
 
 
-
-    // map drawn on bitmap
     ALLEGRO_BITMAP *world = al_create_bitmap(mapwidth, mapheight);
     al_set_target_bitmap(world);
-    al_clear_to_color(al_map_rgba(10, 10, 15, 255));
-    drawmap(mapheight, mapwidth);
+    al_clear_to_color(clearcolor);
+    drawmap(mapheight, mapwidth, is_live);
 
 
 
@@ -178,12 +182,13 @@ int main(void)
 
     ALLEGRO_COLOR textcolor = al_map_rgba(20, 100, 255, 255);
 
-    drawship(ScreenWidth / 2 - 30, ScreenHeight / 2 - 30, &mycolor, 1.0);
-    drawship2(ScreenWidth / 2 + 30, ScreenHeight / 2 - 30, &mycolor2, 1.0);
+    drawship(ScreenWidth / 2 - 45, ScreenHeight / 2 - 30, &mycolor, 1.0);
+    drawship2(ScreenWidth / 2 + 45, ScreenHeight / 2 - 30, &mycolor2, 1.0);
 
     al_draw_text(font, al_map_rgb(190,40,255), ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTRAL*WARRIOR");
     al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Press any key to continue");
 	draweffect(175, ScreenWidth / 2 - 150, ScreenHeight / 2 + 75, 15, 5, line);
+    drawasteroid(ScreenWidth/2, ScreenHeight/2 - 30, &asteroidcolor2, 1.0);
     al_flip_display();
 
 
@@ -251,6 +256,7 @@ youtube.com/watch?v=04_jviOqc3Y");
         al_wait_for_event(tempqueue, &key);
     }while(key.type != ALLEGRO_EVENT_KEY_DOWN && key.type != ALLEGRO_EVENT_DISPLAY_CLOSE);
 
+
     if(key.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         goto finished;
     else if(key.type == ALLEGRO_EVENT_KEY_DOWN)
@@ -262,15 +268,12 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 
 
-
-
-
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
 
 
 	// instructions screen
-	textcolor = al_map_rgb(75, 255, 255);
+	textcolor = al_map_rgba(75, 255, 255, 255);
 
 	drawship(30, 30, &mycolor, 1.0);
 	drawship2(30, ScreenHeight / 2 - 30, &mycolor2, 1.0);
@@ -382,9 +385,22 @@ youtube.com/watch?v=04_jviOqc3Y");
 				goto finished;
 			}
 			else if(key0.keyboard.keycode == ALLEGRO_KEY_P)
+			{
 				defmove = false;
+				al_set_target_bitmap(bitmap2);
+				mycolor2 = al_map_rgb(255, 255, 255);
+				drawship2(8, 11, &mycolor2, 1.0);
+				al_set_target_bitmap(al_get_backbuffer(display));
+			}
 			else
+			{
 				defmove = true;
+				al_set_target_bitmap(bitmap);
+				mycolor = al_map_rgb(20, 150, 255);
+				drawship(8, 11, &mycolor, 1.0);
+				al_set_target_bitmap(al_get_backbuffer(display));
+
+			}
 
 		}
 
@@ -526,9 +542,10 @@ youtube.com/watch?v=04_jviOqc3Y");
 					shipx = mapwidth / 2 - 8;
 					shipy = mapheight / 2 - 10;
 					shipspeed = 0;
-					rotate = 0;
-                    shipsin = 0;
                     shipcos = 0;
+                    shipsin = 0;
+
+					rotate = 0;
 					death = true;
 				}
 				else if(death)
@@ -553,14 +570,13 @@ youtube.com/watch?v=04_jviOqc3Y");
 				}
 
 			
-                shipsin += round(shipspeed * sin(rotate));
-                shipcos -= round(shipspeed * cos(rotate));
-
 				// handles different movement for different ships
-				if(defmove)
+                if(defmove)
 				{
 					shipx += round(shipspeed * sin(rotate));
 					shipy -= round(shipspeed * cos(rotate));
+                    shipcos -= round(shipspeed * cos(rotate));
+                    shipsin += round(shipspeed * sin(rotate));
 				}
 				else
 				{
@@ -572,36 +588,40 @@ youtube.com/watch?v=04_jviOqc3Y");
 					}
 					else
 					{
-						shipx += round(shipspeed * sin(rotate));
-						shipy -= round(shipspeed * cos(rotate));
+						shipx += round(shipspeed * sin(temprotate));
+						shipy -= round(shipspeed * cos(temprotate));
 					}
+                    shipcos -= round(shipspeed * cos(temprotate));
+                    shipsin += round(shipspeed * sin(temprotate));
 				}
 
 				// teleports ship if near screen borders to opposite side
 				if(borders(shipx, shipy))
 				{
+
 					if(shipy - 10 < 0)
                     {
 						shipy = mapheight - 30;
-                        shipcos *= -1;
+                        shipcos = -1 * shipcos;
                     }
 					else if(shipy + 25 > mapheight)
                     {
 						shipy = 15;
-                        shipcos *= -1;
+                        shipcos = -1 * shipcos;
                     }
 
 
 					if(shipx - 10 < 0)
                     {
 						shipx = mapwidth - 30;
-                        shipsin *= -1;
+                        shipsin = -1 * shipsin;
                     }
 					else if(shipx + 25 > mapwidth)
                     {
 						shipx = 15;
-                        shipsin *= -1;
+                        shipsin = -1 * shipsin;
                     }
+
 				}
 
 
@@ -626,7 +646,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 					{
 
 						al_play_sample_instance(musicinstance);
-						for(int i = 0; i < 10; i++)
+						for(int i = 0; i < 10 * (round((mapheight + mapwidth) / 2 / 750)); i++)
 						{
 							float x2 = ((float)rand()/(float)(RAND_MAX)) * (mapwidth - 60) + 30;
 							float y2 = ((float)rand()/(float)(RAND_MAX)) * (mapheight - 60) + 30;
@@ -641,7 +661,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 					{
 						al_stop_sample_instance(musicinstance);
 						al_play_sample_instance(musicinstance1);
-						for(int i = 0; i < 10; i++)
+						for(int i = 0; i < 10 * (round((mapheight + mapwidth) / 2 / 750)); i++)
 						{
 							float x2 = ((float)rand()/(float)(RAND_MAX)) * (mapwidth - 60) + 30;
 							float y2 = ((float)rand()/(float)(RAND_MAX)) * (mapheight - 60) + 30;
@@ -657,7 +677,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 					{
 						al_stop_sample_instance(musicinstance1);
 						al_play_sample_instance(musicinstance2);
-						for(int i = 0; i < 10; i++)
+						for(int i = 0; i < 10 * (round((mapheight + mapwidth) / 2 / 750)); i++)
 						{
 							float x2 = ((float)rand()/(float)(RAND_MAX)) * (mapwidth - 60) + 30;
 							float y2 = ((float)rand()/(float)(RAND_MAX)) * (mapheight - 60) + 30;
@@ -666,7 +686,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 							asteroidlist = insert_node2(x2, y2, rotaterand, 1.5, asteroidlist);
 						}
-						for(int i = 0; i < 10; i++)
+						for(int i = 0; i < 10 * (round((mapheight + mapwidth) / 2 / 750)); i++)
 						{
 							float x2 = ((float)rand()/(float)(RAND_MAX)) * (mapwidth - 60) + 30;
 							float y2 = ((float)rand()/(float)(RAND_MAX)) * (mapheight - 60) + 30;
@@ -688,39 +708,12 @@ youtube.com/watch?v=04_jviOqc3Y");
 			if(draw && al_is_event_queue_empty(event_queue))
 			{
 
+                al_set_target_bitmap(world);
 
-
-
-				if(rotate > 2 * ALLEGRO_PI || rotate < -2 * ALLEGRO_PI)
-				{
-					rotate = 0;
-				}
-
-
-                if(mapframewait == 0)
-                {
-                    al_set_target_bitmap(world);
-                    al_hold_bitmap_drawing(1);
-                    al_clear_to_color(al_map_rgba(10, 10, 15, 255));
-                    drawmap(mapheight, mapwidth);
-                    mapframewait = 0;
-
-                    al_hold_bitmap_drawing(0);
-                }
-                else
-                    mapframewait--;
-
-
-				if(defmove)
-					al_draw_rotated_bitmap(bitmap, 8, 10, shipx, shipy, rotate, 0);
-				else
-					al_draw_rotated_bitmap(bitmap2, 8, 10, shipx, shipy, rotate, 0);
-
-
-				draw_nodes(blastlist, blast);
-
-				draw_nodes2(asteroidlist, asteroid, asteroid2, asteroidspeed);
-
+                al_hold_bitmap_drawing(true);
+                al_clear_to_color(clearcolor);
+                drawmap(mapheight, mapwidth, is_live);
+                al_hold_bitmap_drawing(false);
 
 
 
@@ -737,20 +730,33 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 
 
+
+				if(rotate > 2 * ALLEGRO_PI || rotate < -2 * ALLEGRO_PI)
+				{
+					rotate = 0;
+				}
+
+
+				if(defmove)
+					al_draw_rotated_bitmap(bitmap, 8, 10, shipx, shipy, rotate, 0);
+				else
+					al_draw_rotated_bitmap(bitmap2, 8, 10, shipx, shipy, rotate, 0);
+
+
+				draw_nodes(blastlist, blast);
+
+				draw_nodes2(asteroidlist, asteroid, asteroid2, asteroidspeed);
+
                 al_set_target_bitmap(al_get_backbuffer(display));
 
-
                 al_draw_bitmap(world, ScreenWidth/2 - mapwidth/2 - shipsin, ScreenHeight/2 - mapheight/2 - shipcos, 0);
-
-
-
 
 				// draws and checks for lives
 				if(lives > -1)
 				{
 					int startx = 20;
 					int starty = ScreenHeight - 20;
-					ALLEGRO_COLOR livescolor = al_map_rgba(255, 20, 20, 0);
+					ALLEGRO_COLOR livescolor = al_map_rgba(255, 20, 20, 255);
 					for(int i = 0; i < lives; i++)
 						drawship(startx + 16 * i, starty, &livescolor, 1.0);
 				}
@@ -761,18 +767,15 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 				update_score(scorestring);
 
-				ALLEGRO_COLOR textcolor = al_map_rgba(20, 100, 255, 0);
+				ALLEGRO_COLOR textcolor = al_map_rgba(20, 100, 255, 255);
 				al_draw_text(font, textcolor, 30, 30, ALLEGRO_ALIGN_LEFT, scorestring);
 
 
-
-
-
+				al_flip_display();
 				update_list(lazerspeed, &blastlist);
 
 				update_list2(asteroidspeed, &asteroidlist);
 
-				al_flip_display();
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 			}
 		}
@@ -824,8 +827,8 @@ youtube.com/watch?v=04_jviOqc3Y");
 		{
 			shipx = mapwidth / 2 - 8;
 			shipy = mapheight / 2 - 10;
-            shipsin = 0;
             shipcos = 0;
+            shipsin = 0;
 			shipspeed = 0;
 			rotate = 0;
 			dir = CTRL;

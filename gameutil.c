@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -22,9 +23,9 @@ void drawship(int x, int y, ALLEGRO_COLOR* mycolor, float thickness)
 
     al_draw_line(x + 0, y + -11, x + 8, y + 9, *mycolor, thickness);
 
-    al_draw_line(x + -6, y + 4, x + -1, y + 4, *mycolor, thickness);
+    al_draw_line(x + -2, y + -2, x + 8, y + 9, *mycolor, thickness);
 
-    al_draw_line(x + 6, y + 4, x + 1, y + 4, *mycolor, thickness);
+    al_draw_line(x + 2, y + -2, x + -8, y + 9, *mycolor, thickness);
 }
 
 void drawblast(int x, int y, ALLEGRO_COLOR* mycolor)
@@ -32,6 +33,7 @@ void drawblast(int x, int y, ALLEGRO_COLOR* mycolor)
     al_draw_filled_rectangle(x, y, x + 2, y + 6, *mycolor);
 }
 
+/*
 void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness)
 {
     al_draw_line(x + -20, y + 20, x + -25, y + -10, *mycolor, thickness);
@@ -58,6 +60,48 @@ void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness)
 
     al_draw_line(x + 0, y + 15, x + -20, y + 20, *mycolor, thickness);
 }
+*/
+
+
+void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness)
+{
+    // diagonal lines on sides
+    al_draw_line(x + -30, y + 0, x + -15, y + -30, *mycolor, thickness);
+
+    al_draw_line(x + 15, y + -30, x + 30, y + 0, *mycolor, thickness);
+
+    al_draw_line(x + -30, y + 0, x + -15, y + 30, *mycolor, thickness);
+
+    al_draw_line(x + 15, y + 30, x + 30, y + 0, *mycolor, thickness);
+
+    // top and bottom lines
+    al_draw_line(x + -15, y + -30, x + 15, y + -30, *mycolor, thickness);
+
+    al_draw_line(x + -15, y + 30, x + 15, y + 30, *mycolor, thickness);
+
+
+    al_draw_line(x + -30, y + 0, x + 15, y + -30, *mycolor, thickness);
+
+    al_draw_line(x + -15, y + -30, x + 30, y + 0, *mycolor, thickness);
+
+    al_draw_line(x + 15, y + -30, x + 15, y + 30, *mycolor, thickness);
+
+    al_draw_line(x + 30, y + 0, x + -15, y + 30, *mycolor, thickness);
+
+    al_draw_line(x + 15, y + 30, x + -30, y + 0, *mycolor, thickness);
+
+    al_draw_line(x + -15, y + 30, x + -15, y + -30, *mycolor, thickness);
+
+
+
+    al_draw_line(x + -15, y + 10, x + 0, y + 0, *mycolor, thickness);
+
+    al_draw_line(x + 15, y + 10, x + 0, y + 0, *mycolor, thickness);
+
+    al_draw_line(x + 0, y + -20, x + 0, y + 0, *mycolor, thickness);
+}
+
+
 
 void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect)
 {
@@ -436,8 +480,8 @@ void update_list2(float movement, node2 **nodehead)
             }
         }
 
-        trav->x += movement * sin(trav->rotate);
-        trav->y -= movement * cos(trav->rotate);
+        trav->x += round(movement * sin(trav->rotate));
+        trav->y -= round(movement * cos(trav->rotate));
         trav = trav->next;
     }
 }
@@ -551,20 +595,93 @@ bool collision(node **blastlist, node2 *asteroidlist, float x, float y, bool *as
 }
 
 // should be a multiple of ten
-void drawmap(int height, int width)
+void drawmap(int height, int width, bool is_live[numrows][numcols])
 {
-   int sqheight = height / 10;
-   int sqwidth = width / 10;
+    for (int i = 0; i < numrows; i++)
+    {
+        for(int j = 0; j < numcols; j++)
+        {
 
-   for (int i = 0; i < sqwidth; i++)
-   {
-       for(int j = 0; j < sqheight; j++)
-       {
+            if(is_live[i][j])
+                al_draw_filled_rectangle(j*10,i*10,(j+1)*10,(i+1)*10,al_map_rgba(0, 15, 30, 255));
+        }
+    }
 
-           bool drawsq = rand() % 2;
-           if(drawsq)
-               al_draw_filled_rectangle(i*10,j*10,(i+1)*10,(j+1)*10,al_map_rgba(0,15,45,255));
-       }
-   }
+    for (int i = 0; i < numrows; i++)
+    {
+        for (int j = 0; j < numcols; j++)
+        {
+            bool life;
+            int numclose = 0;
+
+            if(j - 1 > 0)
+            {
+                if(is_live[i][j - 1])
+                    numclose++;
+            }
+
+            if(j - 1 > 0 && i - 1 > 0)
+            {
+                if(is_live[i - 1][j - 1])
+                    numclose++;
+            }
+            
+            if(i - 1 > 0)
+            {
+                if(is_live[i - 1][j])
+                    numclose++;
+            }
+
+            if(j + 1 < numcols)
+            {
+                if(is_live[i][j + 1])
+                    numclose++;
+            }
+
+            if(j + 1 < numcols && i + 1 < numrows)
+            {
+                if(is_live[i + 1][j + 1])
+                    numclose++;
+            }
+            
+            if(i + 1 < numrows)
+            {
+                if(is_live[i + 1][j])
+                    numclose++;
+            }
+
+            if(i - 1 > 0 && j + 1 < numcols)
+            {
+                if(is_live[i - 1][j + 1])
+                    numclose++;
+            }
+
+            if(i + 1 < numrows && j - 1 > 0)
+            {
+                if(is_live[i + 1][j - 1])
+                    numclose++;
+            }
+
+            if(is_live[i][j])
+            {
+                if(numclose < 2)
+                    life = false;
+                if(numclose == 2 || numclose == 3)
+                    life = true;
+                if(numclose > 3)
+                    life = false;
+            }
+            else
+            {
+                if(numclose == 3)
+                    life = true;
+                else
+                    life = false;
+            }
+
+
+            is_live[i][j] = life;
+        }
+    }
 
 }
