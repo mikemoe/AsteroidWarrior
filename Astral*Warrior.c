@@ -515,25 +515,6 @@ youtube.com/watch?v=04_jviOqc3Y");
 			if(events.type == ALLEGRO_EVENT_TIMER)
 			{
 
-				// shoots lazers even when holding space
-				// limited by framewait
-				if(!framewait && dir2 == SPACE)
-				{
-					blastlist = insert_node(shipx, shipy, rotate, blastlist);
-					al_play_sample(lazersound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
-					framewait = true;
-				}
-				else
-				{
-					if(frames <= 10)
-						frames++;
-					else
-					{
-						frames = 0;
-						framewait = false;
-					}
-				}
-
 
 				// checks for death
 				// waits 2 seconds before checking for collisions again
@@ -570,6 +551,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 				}
 
 			
+
 				// handles different movement for different ships
                 if(defmove)
 				{
@@ -594,6 +576,29 @@ youtube.com/watch?v=04_jviOqc3Y");
                     shipcos -= round(shipspeed * cos(temprotate));
                     shipsin += round(shipspeed * sin(temprotate));
 				}
+
+
+
+				// shoots lazers even when holding space
+				// limited by framewait
+				if(!framewait && dir2 == SPACE)
+				{
+					blastlist = insert_node(shipx, shipy, rotate, blastlist);
+					al_play_sample(lazersound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					framewait = true;
+				}
+				else
+				{
+					if(frames <= 10)
+						frames++;
+					else
+					{
+						frames = 0;
+						framewait = false;
+					}
+				}
+
+
 
 				// teleports ship if near screen borders to opposite side
 				if(borders(shipx, shipy))
@@ -772,7 +777,7 @@ youtube.com/watch?v=04_jviOqc3Y");
 
 
 				al_flip_display();
-				update_list(lazerspeed, &blastlist);
+				update_list(lazerspeed + shipspeed, &blastlist);
 
 				update_list2(asteroidspeed, &asteroidlist);
 
