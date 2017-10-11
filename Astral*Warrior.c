@@ -67,6 +67,8 @@ int main(void)
     ScreenWidth = al_get_display_width(display);
     ScreenHeight = al_get_display_height(display);
 
+    al_hide_mouse_cursor(display);
+
     if(!display)
     {
         al_show_native_message_box(NULL, NULL, NULL, "Could not initialize allegro 5", NULL, ALLEGRO_MESSAGEBOX_QUESTION);
