@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -595,22 +598,25 @@ bool collision(node **blastlist, node2 *asteroidlist, float x, float y, bool *as
 }
 
 // should be a multiple of ten
-void drawmap(int height, int width, bool is_live[numrows][numcols])
+void drawmap(int height, int width, bool is_live[numrows][numcols], ALLEGRO_BITMAP *tilemap)
 {
+    al_hold_bitmap_drawing(true);
     for (int i = 0; i < numrows; i++)
     {
         for(int j = 0; j < numcols; j++)
         {
-
             if(is_live[i][j])
-                al_draw_filled_rectangle(j*10,i*10,(j+1)*10,(i+1)*10,al_map_rgba(0, 15, 30, 255));
-        }
-    }
+            {
+                //al_draw_filled_rectangle(j*10,i*10,(j+1)*10,(i+1)*10,al_map_rgba(0, 15, 30, 255));
+                al_draw_bitmap_region(tilemap, 0, 0, squaresize, squaresize, i*squaresize, j*squaresize, 0);
 
-    for (int i = 0; i < numrows; i++)
-    {
-        for (int j = 0; j < numcols; j++)
-        {
+            }
+            else
+            {
+                al_draw_bitmap_region(tilemap, squaresize, 0, squaresize*2, squaresize, i*squaresize, j*squaresize, 0);
+
+            }
+
             bool life;
             int numclose = 0;
 
@@ -681,7 +687,8 @@ void drawmap(int height, int width, bool is_live[numrows][numcols])
 
 
             is_live[i][j] = life;
+
         }
     }
-
+    al_hold_bitmap_drawing(false);
 }

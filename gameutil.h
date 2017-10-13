@@ -11,6 +11,7 @@ extern int mapheight;
 extern int mapwidth;
 extern int numrows;
 extern int numcols;
+extern int squaresize;
 extern const int FPS;
 
 
@@ -72,7 +73,7 @@ void draweffect(float radius, float startx, float starty, float xscale, float ys
 
 
 //TODO make this into conway's game of life
-void drawmap(int height, int width, bool is_live[numrows][numcols]);
+void drawmap(int height, int width, bool is_live[numrows][numcols], ALLEGRO_BITMAP *tilemap);
 
 
 bool borders(int x, int y);

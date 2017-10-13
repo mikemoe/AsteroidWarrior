@@ -17,10 +17,11 @@
 
 int ScreenHeight = 800;
 int ScreenWidth = 800;
-int mapheight = 1500;
-int mapwidth = 1500;
+int mapheight = 2000;
+int mapwidth = 2000;
 int numrows;
 int numcols;
+int squaresize = 100;
 const int FPS = 60;
 
 int score = 0;
@@ -33,8 +34,8 @@ int main(void)
     // seed for random tile map
     srand((unsigned int)time(NULL));
 
-    numrows = mapheight / 10;
-    numcols = mapwidth / 10;
+    numrows = mapheight / squaresize;
+    numcols = mapwidth / squaresize;
 
     bool is_live[numrows][numcols];
 
@@ -112,7 +113,6 @@ int main(void)
     ALLEGRO_COLOR mycolor2 = al_map_rgb(255, 255, 255);
     ALLEGRO_COLOR blastcolor = al_map_rgb(255, 30, 0);
     ALLEGRO_COLOR asteroidcolor = al_map_rgb(255, 25, 255);
-    ALLEGRO_COLOR clearcolor = al_map_rgba(15, 15, 15, 255);
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
 
@@ -127,12 +127,20 @@ int main(void)
     float shipspeed = 0;
     float rotate = 0;
     direction dir = CTRL;
+    const int count = 10; 
+    int mapwait = count;
 
     // draw game art on bitmaps
 
     ALLEGRO_BITMAP *bitmap = al_create_bitmap(16, 20);
     al_set_target_bitmap(bitmap);
     drawship(8, 11, &mycolor, 1.0);
+
+    ALLEGRO_BITMAP *tilemap = al_create_bitmap(squaresize*2, squaresize);
+    al_set_target_bitmap(tilemap);
+    al_draw_filled_rectangle(0, 0, squaresize, squaresize, al_map_rgb(30,30,30));
+    al_draw_filled_rectangle(squaresize, 0, squaresize*2, squaresize, al_map_rgb(10,10,10));
+
 
 
     ALLEGRO_BITMAP *bitmap2 = al_create_bitmap(16, 20);
@@ -145,21 +153,24 @@ int main(void)
     drawblast(0, 0, &blastcolor);
 
 
-    ALLEGRO_BITMAP *asteroid = al_create_bitmap(60, 60);
+    ALLEGRO_BITMAP *asteroid = al_create_bitmap(61, 61);
     al_set_target_bitmap(asteroid);
     drawasteroid(30, 30, &asteroidcolor, 1.0);
 
 
     ALLEGRO_COLOR asteroidcolor2 = al_map_rgb(0, 255, 50);
-    ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(60, 60);
+    ALLEGRO_BITMAP *asteroid2 = al_create_bitmap(61, 61);
     al_set_target_bitmap(asteroid2);
     drawasteroid(30, 30, &asteroidcolor2, 1.0);
 
 
     ALLEGRO_BITMAP *world = al_create_bitmap(mapwidth, mapheight);
+    ALLEGRO_BITMAP *copyworld = al_create_bitmap(mapwidth, mapheight);
     al_set_target_bitmap(world);
-    al_clear_to_color(clearcolor);
-    drawmap(mapheight, mapwidth, is_live);
+    drawmap(mapheight, mapwidth, is_live, tilemap);
+    al_set_target_bitmap(copyworld);
+    al_draw_bitmap(world, 0, 0, 0);
+
 
 
 
@@ -716,12 +727,25 @@ youtube.com/watch?v=04_jviOqc3Y");
 			{
 
                 al_set_target_bitmap(world);
+                al_clear_to_color(al_map_rgb(0,0,0));
 
-                al_hold_bitmap_drawing(true);
-                al_clear_to_color(clearcolor);
-                drawmap(mapheight, mapwidth, is_live);
-                al_hold_bitmap_drawing(false);
+                if (mapwait == 0)
+                {
+                    drawmap(mapheight, mapwidth, is_live, tilemap);
+                    al_set_target_bitmap(copyworld);
 
+                    al_hold_bitmap_drawing(true);
+                    al_draw_bitmap(world, 0, 0, 0);
+                    al_hold_bitmap_drawing(false);
+
+                    al_set_target_bitmap(world);
+                    mapwait = count;
+                }
+                else
+                {
+                    al_draw_bitmap(copyworld, 0, 0, 0);
+                    mapwait--;
+                }
 
 
 				if (data.collide && effectframes <= 30)
@@ -756,7 +780,13 @@ youtube.com/watch?v=04_jviOqc3Y");
 
                 al_set_target_bitmap(al_get_backbuffer(display));
 
+
+                al_hold_bitmap_drawing(true);
+
                 al_draw_bitmap(world, ScreenWidth/2 - mapwidth/2 - shipsin, ScreenHeight/2 - mapheight/2 - shipcos, 0);
+
+                al_hold_bitmap_drawing(false);
+
 
 				// draws and checks for lives
 				if(lives > -1)
