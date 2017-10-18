@@ -111,41 +111,44 @@ void draweffect(float radius, float startx, float starty, float xscale, float ys
 	
 	float rotate = ALLEGRO_PI / 3;
 	float angle = 0;
+    float tempx;
+    float tempy;
 
 	for (int i = 0; i < 6; i++)
 	{
 		float rotation = rotate * i;
 
-		startx += radius * sin(rotation);
-		starty -= radius * cos(rotation);
+	    tempx = startx + (radius * sin(rotation));
+	    tempy = starty - (radius * cos(rotation));
 
 		switch (i)
 		{
 			case 0:
-				angle = ALLEGRO_PI / 4;
+				angle = ALLEGRO_PI / 2;
 				break;
 			case 1:
-				angle = 2 * ALLEGRO_PI / 4;
+				angle = 3 * ALLEGRO_PI / 4;
 				break;
 			case 2:
-				angle = ALLEGRO_PI - ALLEGRO_PI / 4;
+				angle = 5 * ALLEGRO_PI / 4;
 				break;
 			case 3:
-				angle = ALLEGRO_PI / 4;
+				angle = ALLEGRO_PI / 2;
 				break;
 			case 4:
-				angle = 2 * ALLEGRO_PI / 4;
+				angle = 3 * ALLEGRO_PI / 4;
 				break;
 			case 5:
-				angle = ALLEGRO_PI - ALLEGRO_PI / 4;
+				angle = 5 * ALLEGRO_PI / 4;
 				break;
 			default:
 				angle = 0;
 		}
 
-		al_draw_scaled_rotated_bitmap(effect, 0.5, 0.5, startx, starty, xscale, yscale, angle, 0);
+		al_draw_scaled_rotated_bitmap(effect, 0.5, 0.5, tempx, tempy, xscale, yscale, angle, 0);
 	}
 }
+
 
 bool borders(int x, int y)
 {
@@ -595,100 +598,4 @@ bool collision(node **blastlist, node2 *asteroidlist, float x, float y, bool *as
     }
 
     return collision;
-}
-
-// should be a multiple of ten
-void drawmap(int height, int width, bool is_live[numrows][numcols], ALLEGRO_BITMAP *tilemap)
-{
-    al_hold_bitmap_drawing(true);
-    for (int i = 0; i < numrows; i++)
-    {
-        for(int j = 0; j < numcols; j++)
-        {
-            if(is_live[i][j])
-            {
-                //al_draw_filled_rectangle(j*10,i*10,(j+1)*10,(i+1)*10,al_map_rgba(0, 15, 30, 255));
-                al_draw_bitmap_region(tilemap, 0, 0, squaresize, squaresize, i*squaresize, j*squaresize, 0);
-
-            }
-            else
-            {
-                al_draw_bitmap_region(tilemap, squaresize, 0, squaresize*2, squaresize, i*squaresize, j*squaresize, 0);
-
-            }
-
-            bool life;
-            int numclose = 0;
-
-            if(j - 1 > 0)
-            {
-                if(is_live[i][j - 1])
-                    numclose++;
-            }
-
-            if(j - 1 > 0 && i - 1 > 0)
-            {
-                if(is_live[i - 1][j - 1])
-                    numclose++;
-            }
-            
-            if(i - 1 > 0)
-            {
-                if(is_live[i - 1][j])
-                    numclose++;
-            }
-
-            if(j + 1 < numcols)
-            {
-                if(is_live[i][j + 1])
-                    numclose++;
-            }
-
-            if(j + 1 < numcols && i + 1 < numrows)
-            {
-                if(is_live[i + 1][j + 1])
-                    numclose++;
-            }
-            
-            if(i + 1 < numrows)
-            {
-                if(is_live[i + 1][j])
-                    numclose++;
-            }
-
-            if(i - 1 > 0 && j + 1 < numcols)
-            {
-                if(is_live[i - 1][j + 1])
-                    numclose++;
-            }
-
-            if(i + 1 < numrows && j - 1 > 0)
-            {
-                if(is_live[i + 1][j - 1])
-                    numclose++;
-            }
-
-            if(is_live[i][j])
-            {
-                if(numclose < 2)
-                    life = false;
-                if(numclose == 2 || numclose == 3)
-                    life = true;
-                if(numclose > 3)
-                    life = false;
-            }
-            else
-            {
-                if(numclose == 3)
-                    life = true;
-                else
-                    life = false;
-            }
-
-
-            is_live[i][j] = life;
-
-        }
-    }
-    al_hold_bitmap_drawing(false);
 }

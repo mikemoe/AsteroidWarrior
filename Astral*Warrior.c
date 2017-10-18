@@ -17,11 +17,8 @@
 
 int ScreenHeight = 800;
 int ScreenWidth = 800;
-int mapheight = 2000;
-int mapwidth = 2000;
-int numrows;
-int numcols;
-int squaresize = 100;
+int mapheight = 1500;
+int mapwidth = 1500;
 const int FPS = 60;
 
 int score = 0;
@@ -34,18 +31,6 @@ int main(void)
     // seed for random tile map
     srand((unsigned int)time(NULL));
 
-    numrows = mapheight / squaresize;
-    numcols = mapwidth / squaresize;
-
-    bool is_live[numrows][numcols];
-
-    for(int i = 0; i < numrows; i++)
-    {
-        for(int j = 0; j < numcols; j++)
-        {
-            is_live[i][j] = rand() % 2;
-        }
-    }
 
     node *blastlist = NULL;
     node2 *asteroidlist = NULL;
@@ -127,21 +112,10 @@ int main(void)
     float shipspeed = 0;
     float rotate = 0;
     direction dir = CTRL;
-    const int count = 10; 
-    int mapwait = count;
-
-    // draw game art on bitmaps
 
     ALLEGRO_BITMAP *bitmap = al_create_bitmap(16, 20);
     al_set_target_bitmap(bitmap);
     drawship(8, 11, &mycolor, 1.0);
-
-    ALLEGRO_BITMAP *tilemap = al_create_bitmap(squaresize*2, squaresize);
-    al_set_target_bitmap(tilemap);
-    al_draw_filled_rectangle(0, 0, squaresize, squaresize, al_map_rgb(30,30,30));
-    al_draw_filled_rectangle(squaresize, 0, squaresize*2, squaresize, al_map_rgb(10,10,10));
-
-
 
     ALLEGRO_BITMAP *bitmap2 = al_create_bitmap(16, 20);
     al_set_target_bitmap(bitmap2);
@@ -165,13 +139,6 @@ int main(void)
 
 
     ALLEGRO_BITMAP *world = al_create_bitmap(mapwidth, mapheight);
-    ALLEGRO_BITMAP *copyworld = al_create_bitmap(mapwidth, mapheight);
-    al_set_target_bitmap(world);
-    drawmap(mapheight, mapwidth, is_live, tilemap);
-    al_set_target_bitmap(copyworld);
-    al_draw_bitmap(world, 0, 0, 0);
-
-
 
 
     al_set_target_bitmap(al_get_backbuffer(display));
@@ -200,7 +167,7 @@ int main(void)
 
     al_draw_text(font, al_map_rgb(190,40,255), ScreenWidth / 2, ScreenHeight / 2, ALLEGRO_ALIGN_CENTRE, "ASTRAL*WARRIOR");
     al_draw_text(font, textcolor, ScreenWidth / 2, ScreenHeight / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Press any key to continue");
-	draweffect(175, ScreenWidth / 2 - 150, ScreenHeight / 2 + 75, 15, 5, line);
+	draweffect(175, ScreenWidth / 2, ScreenHeight / 2, 15, 5, line);
     drawasteroid(ScreenWidth/2, ScreenHeight/2 - 30, &asteroidcolor2, 1.0);
     al_flip_display();
 
@@ -727,26 +694,10 @@ youtube.com/watch?v=04_jviOqc3Y");
 			{
 
                 al_set_target_bitmap(world);
+
+                al_hold_bitmap_drawing(true);
+
                 al_clear_to_color(al_map_rgb(0,0,0));
-
-                if (mapwait == 0)
-                {
-                    drawmap(mapheight, mapwidth, is_live, tilemap);
-                    al_set_target_bitmap(copyworld);
-
-                    al_hold_bitmap_drawing(true);
-                    al_draw_bitmap(world, 0, 0, 0);
-                    al_hold_bitmap_drawing(false);
-
-                    al_set_target_bitmap(world);
-                    mapwait = count;
-                }
-                else
-                {
-                    al_draw_bitmap(copyworld, 0, 0, 0);
-                    mapwait--;
-                }
-
 
 				if (data.collide && effectframes <= 30)
 				{
@@ -777,7 +728,9 @@ youtube.com/watch?v=04_jviOqc3Y");
 				draw_nodes(blastlist, blast);
 
 				draw_nodes2(asteroidlist, asteroid, asteroid2, asteroidspeed);
-
+                
+                al_hold_bitmap_drawing(false);
+                
                 al_set_target_bitmap(al_get_backbuffer(display));
 
 

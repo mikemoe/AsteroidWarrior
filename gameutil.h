@@ -9,9 +9,6 @@ extern int ScreenHeight;
 extern int ScreenWidth;
 extern int mapheight;
 extern int mapwidth;
-extern int numrows;
-extern int numcols;
-extern int squaresize;
 extern const int FPS;
 
 
@@ -70,11 +67,6 @@ void drawblast(int x, int y, ALLEGRO_COLOR* mycolor);
 void drawasteroid(int x, int y, ALLEGRO_COLOR* mycolor, float thickness);
 
 void draweffect(float radius, float startx, float starty, float xscale, float yscale, ALLEGRO_BITMAP *effect);
-
-
-//TODO make this into conway's game of life
-void drawmap(int height, int width, bool is_live[numrows][numcols], ALLEGRO_BITMAP *tilemap);
-
 
 bool borders(int x, int y);
 
